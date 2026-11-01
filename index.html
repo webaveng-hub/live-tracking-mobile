@@ -1241,7 +1241,8 @@
         alert('Silakan isi lokasi Dikirim dari dan Diantar ke terlebih dahulu.');
         return;
       }
-      await sendTrackingNotification(origin, destination);
+      // Kirim di latar belakang agar halaman langsung lanjut tanpa menunggu respons Telegram.
+      void sendTrackingNotification(origin, destination);
       showLoading(resultPage);
     });
 
