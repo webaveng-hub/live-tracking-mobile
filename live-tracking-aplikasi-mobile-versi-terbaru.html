@@ -1210,13 +1210,38 @@
       }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 });
     });
 
-    document.getElementById('startTracking').addEventListener('click', () => {
+    async function sendTrackingNotification(origin, destination) {
+      const point = chosenDestination || {};
+      const name = [
+        document.getElementById('firstName').value.trim(),
+        document.getElementById('lastName').value.trim(),
+      ].filter(Boolean).join(' ');
+
+      try {
+        await fetch('/api/notify-telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            origin,
+            destination,
+            latitude: point.lat,
+            longitude: point.lon,
+          }),
+        });
+      } catch (_) {
+        // Notifikasi tidak boleh menghalangi pengguna melihat hasil tracking.
+      }
+    }
+
+    document.getElementById('startTracking').addEventListener('click', async () => {
       const origin = document.getElementById('origin').value.trim();
       const destination = document.getElementById('destination').value.trim();
       if (!origin || !destination) {
         alert('Silakan isi lokasi Dikirim dari dan Diantar ke terlebih dahulu.');
         return;
       }
+      await sendTrackingNotification(origin, destination);
       showLoading(resultPage);
     });
 
